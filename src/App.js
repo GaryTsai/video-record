@@ -24,6 +24,10 @@ export default class APP extends React.Component {
 
   componentDidMount() {
     document.addEventListener('resize', () => this.windowSize());
+    this.startCheckTime();
+  }
+
+  startCheckTime = () =>{
     intervalID = window.setInterval(() => this.checkRecordTime(), 250);
   }
 
@@ -32,13 +36,13 @@ export default class APP extends React.Component {
   };
 
   checkRecordTime = () => {
+    console.log('39');
     if (this.compareTime() && !times) {
       times = true;
+      clearInterval(intervalID)
       console.log("時間到 開起相機");
       this.startButton.disabled = true;
       setTimeout(() => this.handleStartCamera(), 100);
-      console.log("一秒後，開始錄製 ");
-      setTimeout(() => this.startRecordVideo("Start Recording"), 1000);
     }
   };
 
@@ -94,12 +98,15 @@ export default class APP extends React.Component {
     this.setUpTime.disabled = false;
     this.setUpLength.disabled = false;
     this.stopCamera.disabled = true;
-    clearInterval(intervalID);
     if (null != TheStream) {
       TheStream.getTracks().map((track) => track.stop());
-
       this.gumVideo.srcObject = null;
       TheStream = null;
+      times = false;
+      this.setUpTime.value = '';
+      this.setUpLength.value = '';
+      this.setState({inputLengthState:false, inputTimeState:false});
+      this.startCheckTime();
     }
   };
 
@@ -152,6 +159,8 @@ export default class APP extends React.Component {
     window.stream = stream;
     TheStream = stream;
     this.gumVideo.srcObject = stream;
+    console.log("一秒後，開始錄製 ");
+    setTimeout(() => this.startRecordVideo("Start Recording"), 1000);
   };
 
   stopRecording = () => {
