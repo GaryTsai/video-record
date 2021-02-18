@@ -36,7 +36,6 @@ export default class APP extends React.Component {
   };
 
   checkRecordTime = () => {
-    console.log('39');
     if (this.compareTime() && !times) {
       times = true;
       clearInterval(intervalID)
